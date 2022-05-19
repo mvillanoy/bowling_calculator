@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.monicavillanoy.bowling_calculator">
    <application
-        android:label="bowling_calculator"
+        android:label="Bowling Calculator"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

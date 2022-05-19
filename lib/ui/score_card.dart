@@ -1,9 +1,7 @@
 import 'package:bowling_calculator/constants/styles.dart';
+import 'package:bowling_calculator/model/frame.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
-
-import '../model/frame.dart';
 
 class ScoreCardPage extends StatefulWidget {
   const ScoreCardPage({Key? key}) : super(key: key);
@@ -13,19 +11,25 @@ class ScoreCardPage extends StatefulWidget {
 }
 
 class _ScoreCardPageState extends State<ScoreCardPage> {
-  late List<Frame> frames = List.filled(11, Frame("-", "-"));
+  late List<Frame> frames = [];
   TextInputFormatter allowedCharsFilter =
       FilteringTextInputFormatter.allow(RegExp("[0-9/Xx-]"));
 
   @override
   void initState() {
+    initFrames();
     super.initState();
+  }
+
+  void initFrames() {
+    for (int i = 0; i < 11; i++) {
+      frames.add(Frame("-", "-", i == frames.length - 1));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     Widget singleItemList(int index) {
-      Frame item = frames[index];
       return Container(
         height: 65,
         decoration: cardStyle,
@@ -51,7 +55,8 @@ class _ScoreCardPageState extends State<ScoreCardPage> {
                   ],
                   maxLength: 1,
                   onChanged: (text) {
-                    item.setFirstRoll(text);
+                    frames[index].setFirstRoll(text);
+                    setState(() {});
                   },
                 ),
               ),
@@ -59,7 +64,6 @@ class _ScoreCardPageState extends State<ScoreCardPage> {
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: SizedBox(
-                // height: 50,
                 width: 50,
                 child: TextFormField(
                   decoration: defaultScoreInputStyle,
@@ -71,7 +75,9 @@ class _ScoreCardPageState extends State<ScoreCardPage> {
                   ],
                   // keyboardType: TextInputType.number,
                   onChanged: (text) {
-                    item.setSecondRoll(text);
+                    setState(() {
+                      frames[index].setSecondRoll(text);
+                    });
                   },
                 ),
               ),
@@ -83,8 +89,6 @@ class _ScoreCardPageState extends State<ScoreCardPage> {
 
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: const Text("Bowling Score Card"),
       ),
       body: SafeArea(
@@ -116,7 +120,8 @@ class _ScoreCardPageState extends State<ScoreCardPage> {
                   decoration: cardStyle,
                   height: 65,
                   alignment: Alignment.center,
-                  child: Text("Total: " + 10.toString(), style: titleStyle),
+                  child: Text("Total: " + Frame.computeScore(frames).toString(),
+                      style: titleStyle),
                 ),
               ],
             ),
